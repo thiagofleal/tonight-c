@@ -6,7 +6,7 @@
   #endif
 
   #include "types/fat.h"
-  #include "types/commom.h"
+  #include "types/common.h"
 
   #ifdef __cplusplus
     }
