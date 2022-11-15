@@ -26,21 +26,21 @@ typedef wchar_t * wstring;
   #define TONIGHT_LONGFIXSTRING_SIZE 1000
 #endif
 
-typedef struct fixString {
+typedef struct fixstring_t {
   char text[TONIGHT_FIXSTRING_SIZE];
-} fixString;
+} fixstring_t;
 
-typedef struct fixWideString {
-  char text[TONIGHT_FIXSTRING_SIZE];
-} fixWideString;
+typedef struct fixwstring_t {
+  wchar_t text[TONIGHT_FIXSTRING_SIZE];
+} fixwstring_t;
 
-typedef struct longFixString {
+typedef struct long_fixstring_t {
   char text[TONIGHT_LONGFIXSTRING_SIZE];
-} longFixString;
+} long_fixstring_t;
 
-typedef struct longFixWideString {
-  char text[TONIGHT_LONGFIXSTRING_SIZE];
-} longFixWideString;
+typedef struct long_fixwstring_t {
+  wchar_t text[TONIGHT_LONGFIXSTRING_SIZE];
+} long_fixwstring_t;
 
 #ifdef __cplusplus
   #define OPTIONAL_ARGS ...
@@ -59,16 +59,10 @@ typedef double (*function_double)(OPTIONAL_ARGS);
 typedef pointer (*function_pointer)(OPTIONAL_ARGS);
 typedef string (*function_string)(OPTIONAL_ARGS);
 typedef wstring (*function_wstring)(OPTIONAL_ARGS);
-typedef fixString (*function_fixString)(OPTIONAL_ARGS);
-typedef fixWideString (*function_fixWideString)(OPTIONAL_ARGS);
-typedef longFixString (*function_longFixString)(OPTIONAL_ARGS);
-typedef longFixWideString (*function_longFixWideString)(OPTIONAL_ARGS);
-
-typedef enum class_visibility {
-  v_private = 0,
-  v_protected = 1,
-  v_public = 2
-} class_visibility;
+typedef fixstring_t (*function_fixstring)(OPTIONAL_ARGS);
+typedef fixwstring_t (*function_fixwstring)(OPTIONAL_ARGS);
+typedef long_fixstring_t (*function_long_fixstring_t)(OPTIONAL_ARGS);
+typedef long_fixwstring_t (*function_long_fixwstring_t)(OPTIONAL_ARGS);
 
 typedef struct t_class t_class, *Class;
 
