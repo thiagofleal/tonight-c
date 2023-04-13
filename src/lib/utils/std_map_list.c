@@ -33,20 +33,67 @@ pointer new_list_map(void) {
   return list;
 }
 
-void list_map_add(pointer list, const pointer key, pointer data) {
-  list_p listMap = list;
+void list_map_set(pointer list, const pointer key, pointer data) {
+  list_p map = list;
 
-  if (listMap) {
+  if (map) {
     node_p node = createNode(key, data);
-    if (listMap->list) {
-      node->next = listMap->list;
-      listMap->list = node;
-    } else {
-      listMap->list = node;
+
+    if (map->list) {
+      node_p iterator = map->list;
+      while (iterator) {
+        if (iterator->key == key) {
+          iterator->data = data;
+          return;
+        }
+        iterator = iterator->next;
+      }
+      node->next = map->list;
+    }
+    map->list = node;
+  }
+}
+
+void list_map_unset(pointer list, const pointer key) {
+  list_p map = list;
+
+  if (map) {
+    if (map->list) {
+      node_p iterator = map->list;
+      if (iterator->key == key) {
+        node_p current = map->list;
+        iterator = map->list = iterator->next;
+        free(current);
+      }
+      while (iterator->next) {
+        if (iterator->next->key == key) {
+          node_p next = iterator->next;
+          iterator->next = next->next;
+          free(next);
+        }
+      }
+      iterator = iterator->next;
     }
   }
 }
 
-pointer list_map_get(pointer list, const pointer key) {}
+pointer list_map_get(pointer list, const pointer key) {
+  list_p map = list;
 
-void list_map_free(pointer list) {}
+  if (map) {
+    if (map->list) {
+      node_p iterator = map->list;
+      while (iterator) {
+        if (iterator->key == key) {
+          return iterator->data;
+        }
+      }
+      iterator = iterator->next;
+    }
+  }
+  return NULL;
+}
+
+void list_map_free(pointer list) {
+  free(list);
+}

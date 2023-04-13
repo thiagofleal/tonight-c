@@ -4,9 +4,11 @@
 
 Define_Exception(MemoryException $as Exception $in "Memory Exception");
 
-extern pointer new_list_map(void);
-extern pointer list_map_get(pointer, pointer);
-extern pointer list_map_free(pointer);
+extern pointer  new_list_map(void);
+extern void     list_map_set(pointer, const pointer, pointer);
+extern pointer  list_map_get(pointer, const pointer);
+extern void     list_map_unset(pointer, const pointer);
+extern void     list_map_free(pointer);
 
 typedef struct {
   size_t size;
@@ -14,8 +16,12 @@ typedef struct {
   byte data[0];
 } memory_t, *memory_p;
 
-pointer Memory_alloc(size_t size) {
-  memory_p memory = malloc(sizeof(memory_t) + size);
+static pointer (* p_malloc)(size_t) = malloc;
+static pointer (* p_realloc)(pointer, size_t) = realloc;
+static void    (* p_free)(pointer) = free;
+
+static pointer Memory_alloc(size_t size) {
+  memory_p memory = p_malloc(sizeof(memory_t) + size);
 
   if (!memory) Throw(MemoryException, "Memory alloc failed");
 
@@ -24,17 +30,54 @@ pointer Memory_alloc(size_t size) {
   return memory->data;
 }
 
-pointer Memory_realloc(pointer memory, size_t size) {}
+static pointer Memory_realloc(pointer _memory, size_t size) {
+  memory_p memory = _memory - sizeof(memory_t);
+  pointer headers = memory->headers;
+  memory = p_realloc(memory, sizeof(memory_t) + size);
 
-size_t Memory_size(pointer memory) {}
+  if (!memory) Throw(MemoryException, "Memory realloc failed");
 
-void Memory_free(pointer memory) {}
+  memory->size = size;
+  memory->headers = headers;
+  return memory->data;
+}
 
-void Memory_Header_add(pointer memory, header_t header, pointer value) {}
+static size_t Memory_size(pointer _memory) {
+  memory_p memory = _memory - sizeof(memory_t);
+  return memory->size;
+}
 
-header_t Memory_Header_get(pointer memory, header_t header) {}
+static void Memory_free(pointer _memory) {
+  memory_p memory = _memory - sizeof(memory_t);
+  p_free(memory);
+}
 
-void Memory_Header_remove(pointer memory, header_t header) {}
+static void Memory_Header_add(pointer _memory, header_t header, pointer value) {
+  memory_p memory = _memory - sizeof(memory_t);
+  list_map_set(memory->headers, header, value);
+}
+
+static pointer Memory_Header_get(pointer _memory, header_t header) {
+  memory_p memory = _memory - sizeof(memory_t);
+  return list_map_get(memory->headers, header);
+}
+
+static void Memory_Header_remove(pointer _memory, header_t header) {
+  memory_p memory = _memory - sizeof(memory_t);
+  return list_map_unset(memory->headers, header);
+}
+
+static void Memory_Functions_setMalloc(pointer (*func)(size_t)) {
+  p_malloc = func;
+}
+
+static void Memory_Functions_setRealloc(pointer (*func)(pointer, size_t)) {
+  p_realloc = func;
+}
+
+static void Memory_Functions_setFree(void (*func)(pointer)) {
+  p_free = func;
+}
 
 struct declare_namespace_Memory Memory = {
   .alloc = Memory_alloc,
@@ -45,5 +88,10 @@ struct declare_namespace_Memory Memory = {
     .add = Memory_Header_add,
     .get = Memory_Header_get,
     .remove = Memory_Header_remove
+  },
+  .Functions = {
+    .setMalloc = Memory_Functions_setMalloc,
+    .setRealloc = Memory_Functions_setRealloc,
+    .setFree = Memory_Functions_setFree
   }
 };
