@@ -48,3 +48,15 @@ pointer stack_pop(pointer stack) {
     free(node);
   }
 }
+
+void stack_free(pointer stack) {
+  p_stack pstack = stack;
+  p_node node = pstack->list;
+
+  while (node) {
+    p_node next = node->next;
+    free(node);
+    node = next;
+  }
+  free(stack);
+}

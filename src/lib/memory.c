@@ -84,12 +84,12 @@ struct declare_namespace_Memory Memory = {
   .realloc = Memory_realloc,
   .size = Memory_size,
   .free = Memory_free,
-  .Header = {
+  .header = {
     .add = Memory_Header_add,
     .get = Memory_Header_get,
     .remove = Memory_Header_remove
   },
-  .Functions = {
+  .functions = {
     .setMalloc = Memory_Functions_setMalloc,
     .setRealloc = Memory_Functions_setRealloc,
     .setFree = Memory_Functions_setFree

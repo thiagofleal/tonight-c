@@ -14,17 +14,17 @@ struct declare_namespace_Memory {
   size_t    (* size)    (pointer);
   void      (* free)    (pointer);
 
-  struct Header {
+  struct header {
     void    (* add)     (pointer, header_t, pointer);
     pointer (* get)     (pointer, header_t);
     void    (* remove)  (pointer, header_t);
-  } Header;
+  } header;
 
-  struct Functions {
+  struct functions {
     void  (* setMalloc)   (pointer (*)(size_t));
     void  (* setRealloc)  (pointer (*)(pointer, size_t));
     void  (* setFree)     (void (*)(pointer));
-  } Functions;
+  } functions;
 };
 
 extern struct declare_namespace_Memory Memory;

@@ -95,5 +95,13 @@ pointer list_map_get(pointer list, const pointer key) {
 }
 
 void list_map_free(pointer list) {
+  list_p map = list;
+  node_p node = map->list;
+
+  while (node) {
+    node_p next = node->next;
+    free(node);
+    node = next;
+  }
   free(list);
 }
